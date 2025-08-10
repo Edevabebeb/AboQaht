@@ -12,26 +12,36 @@
             --bg-color: #0d0d0d;
             --main-color: #00ff66; /* Neon Green */
             --border-color: #333;
-            --terminal-bg: #111;
+            --terminal-bg: #1a1a1a;
         }
 
         body {
             background-color: var(--bg-color);
             color: white;
             font-family: 'Roboto Mono', monospace;
-            text-align: center;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow: hidden; /* هذا السطر يحل مشكلة الشريط */
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .content-container {
+            position: relative;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-        }
-
-        .main-container {
-            width: 100%;
-            max-width: 900px;
+            text-align: center;
             padding: 20px;
         }
 
@@ -44,10 +54,6 @@
             margin-bottom: 30px;
         }
         
-        img.header-image:hover {
-            transform: scale(1.02);
-        }
-
         h1.main-title {
             font-size: 3em;
             letter-spacing: 5px;
@@ -63,7 +69,7 @@
         }
 
         .terminal-box {
-            background-color: var(--terminal-bg);
+            background-color: rgba(26, 26, 26, 0.8);
             border: 1px solid var(--main-color);
             box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
             padding: 30px;
@@ -72,6 +78,7 @@
             font-size: 1.2em;
             line-height: 1.6;
             width: 100%;
+            max-width: 600px;
         }
 
         .terminal-box p {
@@ -95,17 +102,63 @@
     </style>
 </head>
 <body>
+    <canvas id="matrix-canvas"></canvas>
 
-    <div class="main-container">
+    <div class="content-container">
         <img src="pic.png" alt="! iPros Image" class="header-image">
     
         <h1 class="main-title">HACKED BY Abo Qaht</h1>
     
         <div class="terminal-box">
             <p><span class="prompt">system@system:~$</span> <span class="command">why?</span></p>
-            <p><span class="message">Abo Qaht : حمايتكم بريال عموما</span></p>
+            <p><span class="message">Abo Qaht : زووط يا سبك</span></p>
         </div>
     </div>
 
+    <script>
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const columns = canvas.width / 20;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff66';
+            ctx.font = '20px roboto mono';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = katakana[Math.floor(Math.random() * katakana.length)];
+                ctx.fillText(text, i * 20, drops[i] * 20);
+
+                if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 50);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const columns = canvas.width / 20;
+            for (let i = 0; i < columns; i++) {
+                if (!drops[i]) drops[i] = 1;
+            }
+        });
+    </script>
 </body>
 </html>
